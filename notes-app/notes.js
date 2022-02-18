@@ -53,8 +53,34 @@ const loadNotes = function () {
   }
 };
 
+const listNotes = () => {
+  console.log(chalk.inverse('Your notes'))
+  const notes = loadNotes();
+
+  notes.forEach((note) => {
+    console.log(note.title);
+  })
+}
+
+const readNotes = (title) => {
+  const notes = loadNotes();
+  const note = notes.find((note) => {
+    return note.title === title;
+  })
+  if(note){
+    console.log(chalk.yellow.inverse(note.title));
+    console.log(chalk.yellow(note.body));
+  }
+  else{
+    console.log(chalk.red('Note not found'))
+  }
+  
+}
+
 module.exports = {
   getNotes: getNotes,
   addNote: addNote,
+  listNotes: listNotes,
   removeNote: removeNote,
+  readNotes: readNotes
 };
