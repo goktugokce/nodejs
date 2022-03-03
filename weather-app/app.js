@@ -13,7 +13,7 @@ else{
     if(error){
       return console.log(error);
     }
-    forecast(data.latitude, data.lon, (error, forecastData) => {
+    forecast(data.latitude, data.longitude, (error, forecastData) => {
       if(error){
         return console.log(error);
       }
