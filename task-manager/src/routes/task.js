@@ -1,6 +1,6 @@
-const express = require('express');
+const express = require("express");
 const router = new express.Router();
-const Task = require('../models/task')
+const Task = require("../models/task");
 
 router.post("/tasks", async (req, res) => {
   const task = new Task(req.body);
@@ -64,8 +64,30 @@ router.get("/tasks/:id", async (req, res) => {
     });*/
 });
 
-router.patch('/tasks/:id', async (req,res) => {
+router.patch("/tasks/:id", async (req, res) => {
+  const updates = Object.keys(req.body);
+  const allowedUpdates = ["description", "completed"];
+  const isValidOperation = updates.every((update) =>
+    allowedUpdates.includes(update)
+  );
+
+  if (!isValidOperation) {
+    return res.status(400).send({ error: "Invalid Update Type" });
+  }
+
   try {
+    const task = await Task.findById(req.params.id);
+    updates.forEach((update) => (task[update] = req.body[update]));
+    await task.save();
+    if (!task) {
+      return res.status(404).send();
+    }
+    res.send(task);
+  } catch (e) {
+    res.status(404).send();
+  }
+
+  /*try {
     const task = await Task.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
       runValidators: true,
@@ -76,20 +98,19 @@ router.patch('/tasks/:id', async (req,res) => {
     res.send(task);
   } catch (e) {
     res.status(404).send();
-  }
-})
+  }*/
+});
 
-router.delete('/tasks/:id', async (req,res) => {
-  try{
-    const task = await Task.findByIdAndDelete(req.params.id)
-    if(!task){
+router.delete("/tasks/:id", async (req, res) => {
+  try {
+    const task = await Task.findByIdAndDelete(req.params.id);
+    if (!task) {
       return res.status(404).send();
     }
-    res.send(task)
+    res.send(task);
+  } catch (e) {
+    res.status(404).send();
   }
-  catch(e){
-    res.status(404).send()
-  }
-})
+});
 
 module.exports = router;
