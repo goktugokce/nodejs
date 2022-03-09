@@ -1,34 +1,16 @@
 const request = require("supertest");
 const app = require("../src/app");
 const User = require("../src/models/user");
-const jwt = require("jsonwebtoken");
-const mongoose = require("mongoose");
+const {userOneId, userOne, setupDatabase} = require('./fixtures/db')
 
-const userOneId = new mongoose.Types.ObjectId();
-
-const userOne = {
-  _id: userOneId,
-  name: "Mike",
-  email: "mike@example.com",
-  password: "56what!!",
-  tokens: [
-    {
-      token: jwt.sign({ _id: userOneId }, process.env.JWT_SECRET),
-    },
-  ],
-};
-
-beforeEach(async () => {
-  await User.deleteMany();
-  await new User(userOne).save();
-});
+beforeEach(setupDatabase);
 
 /*afterEach(() => {
   console.log('after works?')
 })*/
 
 test("Should sign up a new user", async () => {
-  await request(app)
+  const response = await request(app)
     .post("/users")
     .send({
       name: "Goko",
@@ -36,6 +18,16 @@ test("Should sign up a new user", async () => {
       password: "Red!12345",
     })
     .expect(201);
+
+    const user = await User.findById(response.body.user._id)
+    expect(user).not.toBeNull()
+
+    expect(response.body).toMatchObject({
+      user:{
+        name:'Goko',
+        email:'goktug@example.com'
+      },token:user.tokens[0].token
+    })
 });
 
 test("Should login existing user", async () => {
@@ -83,4 +75,29 @@ test("Should not delete nonauthorized profile for user", async () => {
     .delete("/users/me")
     .send()
     .expect(401);
+});
+
+test('Should upload avatar image', async () => {
+  await request(app)
+    .post('/users/me/avatar')
+    .set("Authorization", `Bearer ${userOne.tokens[0].token}`)
+    .attach('avatar','tests/fixtures/profile-pic.jpg')
+    .expect(200)
+
+  const user = await User.findById(userOneId)
+  expect(user.avatar).toEqual(expect.any(Buffer))
+})
+
+
+test("Should update valid user fields", async () => {
+  await request(app)
+    .patch("/users/me")
+    .set("Authorization", `Bearer ${userOne.tokens[0].token}`)
+    .send({
+      name:'Jess'
+    })
+    .expect(200);
+
+  const user = await User.findById(userOneId)
+  expect(user.name).toEqual('Jess')
 });

@@ -9,4 +9,6 @@
   - .Middleware
   - .Authentication with JWT
   - .ENV.process
+  - .Testing with Jest
+  - .Mocking
   - .etc
