@@ -3,10 +3,10 @@
 ### Practicing Node with Common Examples and Apps
 
 -Covered Topics:
-  -. Routing
-  -. MongoDB
-  -. Mongoose
-  -. Middleware
-  -. Authentication with JWT
-  -. ENV.process
-  -. etc
+  - .Routing
+  - .MongoDB
+  - .Mongoose
+  - .Middleware
+  - .Authentication with JWT
+  - .ENV.process
+  - .etc
