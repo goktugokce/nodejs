@@ -1,0 +1,22 @@
+{
+  "name": "hatcways",
+  "version": "1.0.0",
+  "description": "BACK-END ASSESSMENT - BLOG POSTS",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "jest --watchAll --coverage"
+  },
+  "author": "goktugokce",
+  "license": "ISC",
+  "dependencies": {
+    "apicache": "^1.6.3",
+    "axios": "^0.27.0",
+    "express": "^4.17.3"
+  },
+  "devDependencies": {
+    "jest": "^28.0.2",
+    "nodemon": "^2.0.15",
+    "supertest": "^6.2.3"
+  }
+}
